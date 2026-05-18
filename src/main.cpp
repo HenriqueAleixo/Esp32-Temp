@@ -15,43 +15,21 @@ const int LED_PIN = 2;
 // ===== BIBLIOTECA =====
 EasyThingsBoard tb;
 
-// ===== VARIÁVEIS PARA ARMAZENAR DADOS =====
-int velocidadeSalva = 0;  // Velocidade atual (0-100%)
-
-// Callback para configurar velocidade
-void onSetVelocidade(const JsonVariantConst &data, JsonDocument &response) {
-    Serial.println("⚡ RPC: Configurando velocidade..."); 
-    int novaVelocidade = data.as<int>();
-    
-    if (novaVelocidade >= 0 && novaVelocidade <= 100) {
-        velocidadeSalva = novaVelocidade;
-        Serial.printf("Velocidade configurada: %d%% \n", velocidadeSalva);
-    }
-}
-
-// Callback para consultar velocidade atual
-void onGetVelocidade(const JsonVariantConst &data, JsonDocument &response) {
-    Serial.println("RPC: Consultando velocidade atual...");
-    Serial.printf("Velocidade atual: %d%\n", velocidadeSalva);
-}
-
-void setup() {
+void setup()
+{
     Serial.begin(115200);
     Serial.println("EasyThingsBoard - Super Simples!");
-    
+
     // ===== CONECTAR =====
     tb.connect(WIFI_SSID, WIFI_PASSWORD, TB_TOKEN, TB_SERVER, TB_PORT);
-    tb.setupLED(LED_PIN);  // Já adiciona setState/getState automaticamente!
-    
-    // ===== CONFIGURAR CALLBACKS CUSTOMIZADOS =====
-    tb.addRPC("setVelocidade", onSetVelocidade);  // ← RPC para configurar velocidade
-    tb.addRPC("getVelocidade", onGetVelocidade);  // ← RPC para consultar velocidade
+    tb.setupLED(LED_PIN); // Já adiciona setState/getState automaticamente!
+
     Serial.println("✅ Sistema pronto!");
 }
 
-void loop() {
-    tb.loop();  
-    tb.sendTelemetry("temperatura", 25.5f);  // 'f' especifica float
-    tb.sendTelemetry("velocidade", velocidadeSalva);  // ← Envia velocidade atual
+void loop()
+{
+    tb.loop();
+    tb.sendTelemetry("temperatura", 25.5f);          // 'f' especifica float
     delay(3000);
 }
